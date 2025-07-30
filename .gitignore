@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# R
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+*.Rproj
+.Rproj.user/
+
+# Data files (consider if you want to include large datasets)
+*.csv
+*.xlsx
+*.xls
+# Uncomment the line below if you want to include processed data
+# !data/processed/*.csv
+
+# Log files
+*.log
+*.gz
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*~
+*.tmp
+*.temp
