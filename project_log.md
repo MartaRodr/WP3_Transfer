@@ -33,25 +33,34 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
 
       For the model 2: We save a image of this model in folder: `/results/01SocialAnchor/Model2_EgoSocialTask.png`
 
+      ### Results Visualization:
+      <img src="plots/SocialAnchoring.png" alt="Social Anchoring Results" width="300">
+      
+      *Figure: Relationship between RT (log-transformed) and Rating discrepancy showing social anchoring bias effect.*
+
         Scripts2: egoSocialGraphs.py
           - This script will create the graphs for the egosocial task.
+
     # Experiment 2: Ego Spatial Task
     - `scripting/modelling/egospatialtask/`
       In this folder we will have the scripts to run the models for the egospatial task
-      - Rscripts: `anchorSpatial.R`
+      - Script 1: `anchorinhSpatialBias.R`
         ```r
         Model RT (LMM): RTlog ~ meanDistance_z * AD_z * Score_SpatialGeneral_z + (meanDistance_z  | PROLIFIC_PID)
 
         Model Acc (logit): Accuracy ~  meanDistance_z * AD_z * Score_SpatialGeneral_z +(meanDistance_z  | PROLIFIC_PID)
         ```
 
-      Out put from this models will save in the folder `/results/02EgoSpatialAnchor/`
-      The df with the slopes random for each participants will be save in the folder `scripting/results/02EgoSpatialAnchor/CoefsMixedLinearRT_meanDistance_egoTask.csv`
+        Out put from this models will save in the folder `/results/02EgoSpatialAnchor/`
+        The df with the slopes random for each participants will be save in the folder `scripting/results/02EgoSpatialAnchor/CoefsMixedLinearRT_meanDistance_egoTask.csv`
 
-      For the model 2: We save a image of this model in folder: `/results/02EgoSpatialAnchor/Model2_EgoSpatialTask.png`
+        For the model 2: We save a image of this model in folder: `/results/02EgoSpatialAnchor/Model2_EgoSpatialTask.png`
 
-      - Scripts2: egoSpatialGraphs.py
+      - Scripts2: `egoSpatialGraphs.py`
           - This script will create the graphs for the egospatial task.
+
+      - Scripts3: `CheckEgoSpatialTask.py`
+          - Script to check egospatial features AD between conditions. 
 
     # Experiment 3: Allocentric Spatial Task
     - `scripting/modelling/allotask/binsangularDisparityCorr.py`: This script perform the individual level regression models for the allocentric spatial task.
