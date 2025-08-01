@@ -44,8 +44,8 @@ slopes_spatial = compute_slopes(egoSpatial, 'RTlog_cwc', 'meanDistance', suffix=
 
 
 slopes= pd.merge(slopes_social,slopes_spatial, on='PROLIFIC_PID')
-slopes.to_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\results\anchoring_biasSpatialSocialslopes.csv")
-
+slopes.to_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\results\anchoring_biasSpatialSocialslopes.csv") # Save results
+################################################################################################
 # Differences from zero.
 slopes_long= pd.melt(slopes, id_vars='PROLIFIC_PID', value_vars=['slope_spatial', 'slope_social'], value_name='Slope')
 from scipy.stats import ttest_1samp
@@ -81,15 +81,12 @@ plt.xlabel('Slopes Social')
 plt.ylabel('Slopes EgoSpatial')
 plt.show()
 
-
-
 #################################################################################################################
 # From here we star using the LMixed MOdel from R results:
     # A. RT meanDistance_z with social slopes # 
     # B. Acc meanDistance_z with social slopes # 
     # C. RTmeanDistance vs egocentric performance
     # D. AccmeanDistance vs egocentric performance
-    
 #################################################################################################################
 # A.meanDistance_z RT with social slopes #
 #################################################################################################################
