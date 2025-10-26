@@ -11,8 +11,14 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 from scipy import stats
 
-dfegoSpatial= pd.read_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\Analysis\Experiment\Datasets\egospatialtask.csv")
-dfegoSpatial_mean= dfegoSpatial.groupby(['PROLIFIC_PID'])[['Accuracy','Response.rt']].mean().reset_index()
+#dfegoSpatial= pd.read_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\Analysis\Experiment\Datasets\egospatialtask.csv")
+dfegoSpatial= pd.read_excel(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP5_SocialSpatialTask\Analysis\Datasets\EgoSpatialTask_WP5.xlsx")
+
+participant_ID= 'DNI' # participants with social transformation phase
+#participant_ID= 'PROLIFIC_PID' # online participants
+
+
+dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID])[['Accuracy','Response.rt']].mean().reset_index()
 
 dfegoSpatial['position'] = (
     dfegoSpatial['n_objeto']
@@ -47,7 +53,7 @@ dfegoSpatial['RTlog_pre']= np.log(dfegoSpatial['Response.rt'])
 out_sd_lo= dfegoSpatial['RTlog_pre'].mean() - (2.5 *  (dfegoSpatial['RTlog_pre'].std()))
 out_sd_hi= dfegoSpatial['RTlog_pre'].mean()  + (2.5 *  (dfegoSpatial['RTlog_pre'].std()))
 dfegoSpatial= dfegoSpatial.loc[(dfegoSpatial.RTlog_pre> out_sd_lo) & (dfegoSpatial.RTlog_pre< out_sd_hi)]
-dfegoSpatial['RTlog_pre_mean'] = dfegoSpatial.groupby('PROLIFIC_PID')['RTlog_pre'].transform('mean')
+dfegoSpatial['RTlog_pre_mean'] = dfegoSpatial.groupby(participant_ID)['RTlog_pre'].transform('mean')
 dfegoSpatial['RTlog_pre_cwc']= dfegoSpatial['RTlog_pre'] - dfegoSpatial['RTlog_pre_mean']
 
 ##########################################################################################################################################################
@@ -56,7 +62,7 @@ dfegoSpatial['RTlog_pre_cwc']= dfegoSpatial['RTlog_pre'] - dfegoSpatial['RTlog_p
 # Bins
 fig= plt.figure(2, figsize=(8,7))
 plt.subplot(2,2,1)
-dfegoSpatial_mean= dfegoSpatial.groupby(['PROLIFIC_PID','Self_proximity',])[['Accuracy','Response.rt','distCorrSelf','AD']].mean().reset_index()
+dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'Self_proximity',])[['Accuracy','Response.rt','distCorrSelf','AD']].mean().reset_index()
 sns.barplot(x='Self_proximity', y=dfegoSpatial_mean['Accuracy']*100, data=dfegoSpatial_mean,color='lightgrey')     
 sns.stripplot(x='Self_proximity', y=dfegoSpatial_mean['Accuracy']*100, data=dfegoSpatial_mean,color='black', dodge=True,alpha=0.8, size=3)
 plt.ylabel('Accuracy (%Correct)', color='black',size=16, fontweight='bold')
@@ -75,7 +81,7 @@ plt.show()
 fig= plt.figure(20000, figsize=(10,10))
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style="ticks", rc=custom_params)
-sns.lmplot(x='distCorrSelf', y='Accuracy', data=dfegoSpatial, hue='PROLIFIC_PID', logistic=True, legend=False,scatter_kws={'s': 5,'alpha': 0.1},
+sns.lmplot(x='distCorrSelf', y='Accuracy', data=dfegoSpatial, hue=participant_ID, logistic=True, legend=False,scatter_kws={'s': 5,'alpha': 0.1},
            line_kws={'linewidth': 0.9}, ci=None,palette='Greys')
 
 sns.regplot(x='distCorrSelf', y='Accuracy', data=dfegoSpatial,logistic=True, scatter=False, color='red')
@@ -115,7 +121,7 @@ plt.show()
 ''' Este pack es para dibujar la grafica pero 
 con distribucion de la variables tambien '''
 
-pids    = dfegoSpatial['PROLIFIC_PID'].unique()
+pids    = dfegoSpatial[participant_ID].unique()
 palette = sns.color_palette("Greys", n_colors=len(pids))
 
 # 1) Figure + 2×1 GridSpec (top histogram, bottom joint plot)
@@ -131,7 +137,7 @@ ax_joint = fig.add_subplot(gs[1, 0])  # bottom: scatter + logistic fits
 
 # 2) Per‐PID logistic fits + points (Accuracy)
 for pid, color in zip(pids, palette):
-    sub = dfegoSpatial[dfegoSpatial['PROLIFIC_PID'] == pid]
+    sub = dfegoSpatial[dfegoSpatial[participant_ID] == pid]
     sns.regplot(
         x='meanDistance',
         y='Response.rt',
@@ -172,12 +178,12 @@ plt.show()
 results_df=pd.DataFrame()
 results_df2=pd.DataFrame()
 results_modelfull_df= pd.DataFrame()
-participants= dfegoSpatial['PROLIFIC_PID'].unique() 
+participants= dfegoSpatial[participant_ID].unique() 
 
 import statsmodels.formula.api as smf
 for participant in participants:
         ## Fit logistic model for each participant:
-        df_participant= dfegoSpatial.loc[dfegoSpatial['PROLIFIC_PID']== participant]
+        df_participant= dfegoSpatial.loc[dfegoSpatial[participant_ID]== participant]
 
         # Fit logistic regresion
         model = smf.logit("Accuracy ~ AD", data=df_participant)
@@ -211,7 +217,8 @@ for participant in participants:
 
 
 cofs= pd.merge(results_df,results_df2, on='PROLIFIC_PID')  
-cofs.to_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\Analysis\Experiment\Datasets\coefficients_EachParticipants_logisticEgoSpatialTask.csv")
+
+#cofs.to_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\Analysis\Experiment\Datasets\coefficients_EachParticipants_logisticEgoSpatialTask.csv")
 
 
 #### RESULTS FROM THE REGRESION MODEL IN R MIXED LOGISTIC REGRESION MODEL 
@@ -247,7 +254,7 @@ plt.show()
                     ############## REACTION TIMES #######################
                     
 # Prepare your data & palette
-pids     = dfegoSpatial['PROLIFIC_PID'].unique()
+pids     = dfegoSpatial[participant_ID].unique()
 palette  = sns.color_palette("Greys", n_colors=len(pids))
 
 # Create figure + GridSpec layout
@@ -266,7 +273,7 @@ ax_histy = fig.add_subplot(gs[1, 1])   # right histogram
 
 # 1) Per-PID regressions + points
 for pid, color in zip(pids, palette):
-    sub = dfegoSpatial[dfegoSpatial['PROLIFIC_PID'] == pid]
+    sub = dfegoSpatial[dfegoSpatial[participant_ID] == pid]
     sns.regplot(
         x='meanDistance', y='Response.rt',
         data=sub,
@@ -326,8 +333,8 @@ dfegoSpatial['RTlog']= np.log(dfegoSpatial['Response.rt'])
 out_sd_lo= dfegoSpatial['RTlog'].mean() - (2.5*  (dfegoSpatial['RTlog'].std()))
 out_sd_hi= dfegoSpatial['RTlog'].mean()  + (2.5*  (dfegoSpatial['RTlog'].std()))
 dfegoSpatial= dfegoSpatial.loc[(dfegoSpatial.RTlog> out_sd_lo) & (dfegoSpatial.RTlog< out_sd_hi)]
-dfegoSpatial['RTlog_mean'] = dfegoSpatial.groupby('PROLIFIC_PID')['RTlog'].transform('mean')
-dfegoSpatial['std'] = dfegoSpatial.groupby('PROLIFIC_PID')['RTlog'].transform('std')
+dfegoSpatial['RTlog_mean'] = dfegoSpatial.groupby(participant_ID)['RTlog'].transform('mean')
+dfegoSpatial['std'] = dfegoSpatial.groupby(participant_ID)['RTlog'].transform('std')
 dfegoSpatial['RTlog_cwc']= (dfegoSpatial['RTlog'] - dfegoSpatial['RTlog_mean'])
 dfegoSpatial['RTlog_std']= (dfegoSpatial['RTlog'] - dfegoSpatial['RTlog_mean'])/(dfegoSpatial['std'] )
 
@@ -346,7 +353,7 @@ jg1.ax_joint.set_xlim(-2, +2)
 jg1.ax_joint.set_ylim(0, 10)
 plt.show()
 
-rt = dfegoSpatial.groupby(['PROLIFIC_PID'])['Response.rt'].agg(['mean','sem','std']).reset_index()
+rt = dfegoSpatial.groupby([participant_ID])['Response.rt'].agg(['mean','sem','std']).reset_index()
 print('Participants mean anchor rt:' + str(rt['mean'].mean()) +  ' with a SEM of: '+ str(rt['sem'].mean()))
 
 #############################################################################################################
@@ -364,8 +371,8 @@ dfegoSpatial['RTlog']= np.log(dfegoSpatial['Response.rt'])
 out_sd_lo= dfegoSpatial['RTlog'].mean() - (2.5*  (dfegoSpatial['RTlog'].std()))
 out_sd_hi= dfegoSpatial['RTlog'].mean()  + (2.5*  (dfegoSpatial['RTlog'].std()))
 dfegoSpatial= dfegoSpatial.loc[(dfegoSpatial.RTlog> out_sd_lo) & (dfegoSpatial.RTlog< out_sd_hi)]
-dfegoSpatial['RTlog_mean'] = dfegoSpatial.groupby('PROLIFIC_PID')['RTlog'].transform('mean')
-dfegoSpatial['std'] = dfegoSpatial.groupby('PROLIFIC_PID')['RTlog'].transform('std')
+dfegoSpatial['RTlog_mean'] = dfegoSpatial.groupby(participant_ID)['RTlog'].transform('mean')
+dfegoSpatial['std'] = dfegoSpatial.groupby(participant_ID)['RTlog'].transform('std')
 dfegoSpatial['RTlog_cwc']= (dfegoSpatial['RTlog'] - dfegoSpatial['RTlog_mean'])
 dfegoSpatial['RTlog_std']= (dfegoSpatial['RTlog'] - dfegoSpatial['RTlog_mean'])/(dfegoSpatial['std'] )
 
@@ -384,12 +391,12 @@ jg1.ax_joint.set_xlim(-2, +2)
 jg1.ax_joint.set_ylim(0, 5)
 plt.show()
 
-rt = dfegoSpatial.groupby(['PROLIFIC_PID'])['Response.rt'].agg(['mean','sem','std']).reset_index()
+rt = dfegoSpatial.groupby([participant_ID])['Response.rt'].agg(['mean','sem','std']).reset_index()
 print('Participants mean anchor rt:' + str(rt['mean'].mean()) +  ' with a SEM of: '+ str(rt['sem'].mean()))
 
 ###############################################################################################################
 #### SELF VS LANDMARK PROXIMITY ####
-dfegoSpatial_mean= dfegoSpatial.groupby(['PROLIFIC_PID','SelfvsLandmark_proximity',])[['Accuracy','Response.rt']].mean().reset_index()
+dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'SelfvsLandmark_proximity',])[['Accuracy','Response.rt']].mean().reset_index()
 
 fig=plt.figure(3, figsize=(8,8))
 plt.subplot(2,2,1)
@@ -428,7 +435,7 @@ for i in variables:
     print(f"str(i)i: t = {t_stat_scipy:.3f}, p = {p_value_scipy:.3f}")
 
 
-dfegoSpatial_mean= dfegoSpatial.groupby(['PROLIFIC_PID','Difficulty',])[['Accuracy','Response.rt']].mean().reset_index()
+dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'Difficulty',])[['Accuracy','Response.rt']].mean().reset_index()
 
 #### DIFFICULTY ####
 fig= plt.figure(4, figsize=(8,8))
@@ -460,7 +467,7 @@ for i in variables:
 ## Tryal tupe encond
 
 fig= plt.figure(5, figsize=(8,8))
-dfegoSpatial_mean= dfegoSpatial.groupby(['PROLIFIC_PID','Type_trialEncoded','Difficulty'])[['Accuracy','Response.rt','AD']].mean().reset_index()
+dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'Type_trialEncoded','Difficulty'])[['Accuracy','Response.rt','AD']].mean().reset_index()
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style="ticks", rc=custom_params)
 
@@ -493,7 +500,7 @@ for i in variables:
 
 #############################
 fig= plt.figure(5, figsize=(8,8))
-dfegoSpatial_mean= dfegoSpatial.groupby(['PROLIFIC_PID','Angle'])[['Accuracy','Response.rt','AD']].mean().reset_index()
+dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'Angle'])[['Accuracy','Response.rt','AD']].mean().reset_index()
 
 plt.subplot(2,3,1)
 sns.barplot(x='Angle', y=dfegoSpatial_mean['Accuracy']*100, data=dfegoSpatial_mean,color='lightgrey')
@@ -535,7 +542,7 @@ import pandas as pd
 
 summary = (
     dfegoSpatial
-    .groupby(['PROLIFIC_PID','Self_proximity', 'Difficulty', 'SelfvsLandmark_proximity'])
+    .groupby([participant_ID,'Self_proximity', 'Difficulty', 'SelfvsLandmark_proximity'])
     .apply(lambda g: pd.Series({
         'accuracy'   : g['Accuracy'].mean(),                              
         'mean_rt_s'  : g.loc[g['Accuracy']==1, 'Response.rt'].mean(),             

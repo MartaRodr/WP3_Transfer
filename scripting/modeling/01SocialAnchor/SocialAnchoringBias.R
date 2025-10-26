@@ -28,7 +28,7 @@ emm_options(lmer.df = "asymptotic")
 ---------------------------------------------------------------------------------------------------#
 # *- Load and prepare data ------------------------------------------------
 dat <- read.csv("/Users/aramendi/Desktop/EscritorioMARTA/WP_Transfer/WP3Project/data/processed/egosocialtask.csv", stringsAsFactors = T)
-
+dat <- read.csv(Users/aramendi/Desktop/EscritorioMARTA/)
 # Number of responses prior to exclusion
 dim(dat)[1] # N =9092
 
@@ -69,6 +69,9 @@ dat <- dat %>%
 # *- Analysis: Main model -------------------------------------------------
 # Fit model
 mod_social <- mixed( RD ~ RTlog_cwc * Individual + (1 | PROLIFIC_PID) + (0+RTlog_cwc || PROLIFIC_PID) ,  data = dat, method = "S")
+
+# Fit model
+mod_social <- mixed( RTlog_cwc ~ sim +  (1 | PROLIFIC_PID) + (0+RTlog_cwc || PROLIFIC_PID) ,  data = dat, method = "S")
 
 mod1 <- mixed(RD ~ RTlog_cwc * Individual + (1 | PROLIFIC_PID), data=dat, method="S")
 

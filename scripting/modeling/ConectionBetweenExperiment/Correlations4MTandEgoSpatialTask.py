@@ -42,21 +42,43 @@ social_slopes= pd.read_csv(path_modelsR + "\\anchoring_biasSpatialSocialslopes.c
 
 # Mean Dfs
 df4mtmean_disparity= df4MT.groupby(['PROLIFIC_PID','angularDisparity'])['key_resp_3.corr'].mean().reset_index()
-df4mtmean= df4MT.groupby('PROLIFIC_PID')['key_resp_3.corr'].mean().reset_index()
-dfegoSpatial_mean= dfegoSpatial.groupby('PROLIFIC_PID')['Accuracy'].mean().reset_index()
+df4mtmean= df4MT.groupby('PROLIFIC_PID').mean().reset_index()
+dfegoSpatial_mean= dfegoSpatial.groupby('PROLIFIC_PID').mean().reset_index()
 
 #####################################################################################
 
 def Correlations_across_parameters(df1,df2, y_variable, x_variable): 
     '''This function create the fig and the correlation between the merge dfs
      depending on the variables of interes'''
-     
+   
+        
     union= pd.merge(df1,df2, on='PROLIFIC_PID')
     plt.figure(figsize=(5,4))
     sns.regplot(data=union, y=y_variable, x=x_variable,ci=99, marker="o", color=".3", line_kws=dict(color="r"))
-    #plt.ylabel('4MT performance', color='black',size=16, fontweight='bold')
-    #plt.xlabel('Social slopes', color='black',size=16, fontweight='bold')
-    plt.show()
+    
+    if df2 is slopesSpatialAcc and  y_variable=='key_resp_3.corr':
+        
+        plt.xlabel('meanDistance slopes Acc', color='black',size=16, fontweight='bold')
+        plt.ylabel('4MT Performance', color='black',size=16, fontweight='bold')
+        plt.savefig(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\plots\AllovsEgoSpatial_PerformanceVSAccSlopes.png", dpi=300, bbox_inches='tight')
+        
+    elif df2 is slopesSpatialRT and y_variable=='key_resp_3.corr': 
+        plt.xlabel('meanDistance slopes RT', color='black',size=16, fontweight='bold')
+        plt.ylabel('4MT Performance', color='black',size=16, fontweight='bold')
+        plt.savefig(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\plots\AllovsEgoSpatial_PerformanceVSRTSlopes.png", dpi=300, bbox_inches='tight')
+        
+    
+    elif (df2 is df4mtmean and x_variable=='key_resp_3.corr') and (df1 is dfegoSpatial_mean and y_variable=='Accuracy'): 
+            plt.ylabel('EgoSpatialTask Performance', color='black',size=16, fontweight='bold')
+            plt.xlabel('4MT Performance', color='black',size=16, fontweight='bold')
+            plt.savefig(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\plots\AllovsEgoSpatial_Performance.png", dpi=300, bbox_inches='tight')
+            
+    elif (df2 is df4mtmean and x_variable=='key_resp_3.rt') and (df1 is dfegoSpatial_mean and y_variable=='Response.rt'): 
+            plt.ylabel('EgoSpatialTask RT', color='black',size=16, fontweight='bold')
+            plt.xlabel('4MT RT', color='black',size=16, fontweight='bold')
+            plt.savefig(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\plots\AllovsEgoSpatial_RTs.png", dpi=300, bbox_inches='tight')
+
+    plt.show() 
     
     print("------------------------------------------------------------------")
     print("----- CORRELATION between "+str(y_variable)+ " and "+str(x_variable)+" : ")
@@ -73,10 +95,13 @@ def Correlations_across_parameters(df1,df2, y_variable, x_variable):
 #####################################################################################
 
 # Correlations between 4MT Linear Term and egospatial task
-Correlations_across_parameters(df4mtmean, slopesSpatialAcc, 'meanDistance_z','key_resp_3.corr') 
+Correlations_across_parameters(df4mtmean, slopesSpatialAcc, 'key_resp_3.corr','meanDistance_z') 
 Correlations_across_parameters(df4MTLinear, slopesSpatialAcc, 'slopesRT_4MT','meanDistance_z')
 Correlations_across_parameters(df4MTLinear, slopesSpatialAcc, 'slope_4MT','meanDistance_z')
 
-Correlations_across_parameters(slopesSpatialRT, df4mtmean, 'slope_random_meanDistance','key_resp_3.corr') 
-Correlations_across_parameters(slopesSpatialRT,df4MTLinear, 'slopesRT_4MT','slope_random_meanDistance')    
-Correlations_across_parameters(slopesSpatialRT,df4MTLinear, 'slope_4MT','slope_random_meanDistance')  
+Correlations_across_parameters( df4mtmean,slopesSpatialRT,'key_resp_3.corr', 'slope_random_meanDistance') 
+Correlations_across_parameters(df4MTLinear,slopesSpatialRT, 'slopesRT_4MT','slope_random_meanDistance')    
+Correlations_across_parameters(df4MTLinear,slopesSpatialRT, 'slope_4MT','slope_random_meanDistance')  
+
+Correlations_across_parameters(dfegoSpatial_mean,df4mtmean, 'Accuracy','key_resp_3.corr')  
+Correlations_across_parameters(dfegoSpatial_mean,df4mtmean, 'Response.rt','key_resp_3.rt')  

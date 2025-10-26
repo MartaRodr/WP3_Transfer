@@ -56,8 +56,8 @@ def Correlations_across_parameters(df1,df2, y_variable, x_variable):
     union= pd.merge(df1,df2, on='PROLIFIC_PID')
     plt.figure(figsize=(5,4))
     sns.regplot(data=union, y=y_variable, x=x_variable,ci=99, marker="o", color=".3", line_kws=dict(color="r"))
-    #plt.ylabel('4MT performance', color='black',size=16, fontweight='bold')
-    #plt.xlabel('Social slopes', color='black',size=16, fontweight='bold')
+    plt.xlabel('4MT Slopes', color='black',size=16, fontweight='bold')
+    plt.ylabel('Social slopes', color='black',size=16, fontweight='bold')
     plt.show()
     
     print("------------------------------------------------------------------")

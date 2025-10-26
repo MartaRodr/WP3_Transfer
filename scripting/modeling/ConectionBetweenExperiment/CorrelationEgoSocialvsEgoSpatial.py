@@ -12,8 +12,6 @@ import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from scipy.stats import spearmanr, pearsonr
 
-
-
 ################################################################################################
 # Open datasets
 paths_cleanedData= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\data\cleanedData"
@@ -95,15 +93,15 @@ dfegoSpatialSocial= pd.merge(slopes, slopesSpatialRT, on='PROLIFIC_PID')
 x=dfegoSpatialSocial['slope_social']
 y=dfegoSpatialSocial['slope_random_meanDistance']
 plt.figure ( 1, figsize=(5,5))
-sns.regplot(x=x, y=y,data=dfegoSpatialSocial, color='black')
+sns.regplot(x=x, y=y,data=dfegoSpatialSocial, ci=99, marker="o", color=".3", line_kws=dict(color="r"))
 
 correlation, p_value = spearmanr(x, y)
 
 plt.text(0.05, 0.95, f'SpearmanR: {correlation:.2f}', fontsize=10, transform=plt.gca().transAxes,va='top', ha='left')
 plt.text(0.05, 0.9, f'p-value: {p_value:.2f}', fontsize=10, transform=plt.gca().transAxes,va='top', ha='left')
 
-plt.xlabel('Slopes Social')
-plt.ylabel('Coeff EgoSpatial')
+plt.xlabel('Slopes social', color='black',size=16, fontweight='bold')
+plt.ylabel('Coeff EgoSpatial RT', color='black',size=16, fontweight='bold')
 
 plt.show()
 #################################################################################################################

@@ -73,7 +73,11 @@ dat$Score_SpatialGeneral_z <- scale(dat$Score_SpatialGeneral, center = TRUE, sca
 
 # *- Analysis: Spatial model -------------------------------------------------
 # Fit model RTmodel
-mod_spatial <- mixed( RTlog ~  meanDistance_z * AD_z * Score_SpatialGeneral_z +
+mod_spatial <- mixed( RTlog ~  meanDistance_z * Self_proximity * AD_z * Score_SpatialGeneral_z +
+                        (meanDistance_z  | PROLIFIC_PID),  data = dat, method = "S")
+summary(mod_spatial)
+
+mod_spatial <- mixed( RTlog ~  meanDistance_z * Self_proximity * AD_z  +
                         (meanDistance_z  | PROLIFIC_PID),  data = dat, method = "S")
 summary(mod_spatial)
 
@@ -105,7 +109,19 @@ mod_spatial_logit2 <- glmer(
   )
 )
 
-summary(mod_spatial_logit2)
+v
+
+
+mod_spatial_logit2 <- glmer(
+  Accuracy ~  meanDistance_z * Self_proximity * Score_SpatialGeneral_z +
+    (meanDistance_z  | PROLIFIC_PID),
+  data   = dat,
+  family = binomial(link = "logit"),
+  control = glmerControl(
+    optimizer = "bobyqa",
+    optCtrl   = list(maxfun = 5e5)
+  )
+)
 
 
 tab_model(

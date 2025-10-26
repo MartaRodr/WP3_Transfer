@@ -69,11 +69,11 @@ plt.ylabel('Performance', fontsize=16, fontweight='bold')
 plt.ylim(0, None)
 plt.tight_layout()
 plt.show()
-
 ##########################################################################################################################
 
 df4mtMeans= df4MT.groupby(['PROLIFIC_PID','bin'])['key_resp_3.corr','key_resp_3.rt'].mean().reset_index()
-plt.figure(1, figsize=(3,6))
+plt.figure(1, figsize=(10,15))
+plt.subplot(2,2,1)
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style="ticks", rc=custom_params)
 sns.barplot(data= df4mtMeans, x='bin', y=df4mtMeans['key_resp_3.corr']*100,color='lightgrey', ci=None)
@@ -92,9 +92,8 @@ sns.pointplot(
 
 plt.xlabel('Angular Disparity bins', color='black',size=16, fontweight='bold')
 plt.ylabel('Performance (%Correct)', color='black',size=16, fontweight='bold')
-plt.show()
 
-plt.figure(2, figsize=(3,6))
+plt.subplot(2,2,2)
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style="ticks", rc=custom_params)
 sns.barplot(data= df4mtMeans, x='bin', y=df4mtMeans['key_resp_3.rt']*1000,color='lightgrey', ci=None)
@@ -113,6 +112,7 @@ sns.pointplot(
 
 plt.xlabel('Angular Disparity bins', color='black',size=16, fontweight='bold')
 plt.ylabel('RT(ms)', color='black',size=16, fontweight='bold')
+plt.savefig(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\plots\AlloSpatial_LinearRTAcc.png", dpi=300, bbox_inches='tight')
 plt.show()
 
 ##########################################################################################################################

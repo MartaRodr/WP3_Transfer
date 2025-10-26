@@ -56,6 +56,15 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
 
         For the model 2: We save a image of this model in folder: `/results/02EgoSpatialAnchor/Model2_EgoSpatialTask.png`
 
+        #Interpretations parameters:
+        - Slopes for Acc- meanDistance_z: ('meanDistance_z') negatives slopes, indicating that the higher the distance the lower the accuracy.
+        - Slopes for RT- meanDistance_z: ('meanDistance_z') positives slopes, indicating that the higher the distance the higher the RT. 
+        
+        🔴 Rayada: es verdaderamente este parametro indicador de spatial bias egocentric?
+
+
+        - Slopes for RT- meanDistance_z: ('slopes_randomMeanDistance') positives slopes, indicating that the higher the distance the higher the RT.
+
       - Scripts2: `egoSpatialGraphs.py`
           - This script will create the graphs for the egospatial task.
 
@@ -63,7 +72,7 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
           - Script to check egospatial features AD between conditions. 
 
     # Experiment 3: Allocentric Spatial Task
-    - `scripting/modelling/allotask/binsangularDisparityCorr.py`: This script perform the individual level regression models for the allocentric spatial task.
+    - `scripting/modelling/allotask/binsangularDisparityCorr.py`: This script perform the individual level regression models for the allocentric spatial tºask.
     - `scripting/modelling/allotask/mixedModel4MT_linearEffect.R`: For the mixed models, the script will be runned in R.
       
       ## Linear regressions, agrupping by bins.
@@ -80,8 +89,14 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
 
       The linear slopes are calcualted just using a single participant regression model. The df with the slopes for each bins will be save in the folder `scripting/results/03AllocentricAnchor/LinearRegressionAngDisp_4MT.csv`
 
+      ### Results Visualization:
+      <img src="plots/AlloSpatial_LinearRTAcc.png" alt="4MT results" width="500">
+      
+      *Figure: Relationship between RT and Performance with angular disparity.*
+
       - Mean Principal results: there is a negative correlation between the angular dispairty and RTS, and a positive correlation between the angular disparity and accuracy ( both aprroach confirm this results, single regression and mixed models).
-      Cosa rayante: not explaing to much variance, but the results are significant.
+     
+     🔴Rayada: not explaing to much variance, but the results are significant.
 
       ## Quadratric regressions. 
     - `scripting/modelling/allotask/USHAPE_modelQuadratic.py`: single regression for each participant, to calculate the slopes for the quadratic term.
@@ -99,22 +114,33 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
       
 
     # CONNECTION BETWEEN EXPERIMENTS
+    All the anlaysis performed to correlated results between experiments: `scripting/modelling/ConnectionBetweenExperiment/`
 
-    - `scripting/modelling/ConnectionBetweenExperiment/`
-    ## 1. Correlations between egoSocial and egospatial task: Correlations done:
+    ## 1. Correlations between egoSocial and egospatial task: 
         - RTmeanDistance_z with egocentric performance
-        - AccmeanDistance_z with egocentric performance 
+        - AccmeanDistance_z with egocentric performance
+      Significant effect found
+      
         - RTmeanDistance_z with social slopes
         - AccmeanDistance_z with social slopes
         - Individuals models social slopes with spatial slopes.
-    
-        Nothing significant found.
+      Nothing significant found.
 
-    ## 2.Correlations between 4MT  and egospatial task:
+    ## 2. Correlations between 4MT and egospatial task:
     List with all corelations performed
-      ### LinearTerm models: 
-        - RTmeanDistance_z with 4MT performance: significant effect, found a positive relantionship.
-        - AccmeanDistance_z with 4MT performance: NOT significant effect.
+    `scripts/modelling/ConnectionBetweenExperiment/Correlation4MT_EgoSpatial.py`
+    
+    ### LinearTerm models: 
+    - RTmeanDistance_z with 4MT performance: significant effect, found a positive relantionship. 
+      Interpreatation: 
+    - AccmeanDistance_z with 4MT performance: NOT significant effect, but marginally significant.
+
+    ### Results Visualization:
+    <img src="plots/AllovsEgoSpatial_PerformanceVSAccSlopes.png" alt="4MT Accuracy Slopes" width="400" style="display: inline-block; margin-right: 10px;">
+    <img src="plots/AllovsEgoSpatial_PerformanceVSRTSlopes.png" alt="4MT RT Slopes" width="400" style="display: inline-block;">
+    
+    *Figure: Relationship between egospatial slopes and 4MT performance. Left: Accuracy slopes, Right: RT slopes.*
+
 
         - RTmeanDistance_z with linearTerm Accuracy 4MT
         - RTmeanDistance_z with linearTerm RTS 4MT
@@ -132,10 +158,14 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
     ## 3. Correlations between 4MT and social task:
     `scripts/modelling/ConnectionBetweenExperiment/Correlation4MT_Social.py`
     List with all corelations performed
+
       ### LinearTerm models:  
         - social slopes with linearTerm Accuracy 4MT
         - social slopes with linearTerm RTS 4MT
+      Nothing significant found.
 
        ### QuadraticTerm models: 
         - social slopes with quadraticTerm Accuracy 4MT
         - social slopes with quadraticTerm RTS 4MT
+
+      Nothing significant found.
