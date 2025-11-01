@@ -31,6 +31,7 @@ df4MT= pd.read_csv(path_data + "\\processed\\AlloTask_SpatialScore.csv")
 path_modelsR= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\results"
 slopesSpatialRT= pd.read_csv(path_modelsR + "\\02EgoSpatialTask\\CoefsMixedLinearRT_meanDistance_egoTask.csv")
 slopesSpatialAcc= pd.read_csv(path_modelsR + "\\02EgoSpatialTask\\CoefsMixedLogisticAcc_meanDistance_egoTask.csv")
+slopesSpatialRTdistCorr= pd.read_csv(path_modelsR + "\\02EgoSpatialTask\\CoefsMixedLinearRT_selfCorrectDistance_egoTask.csv")
 
 # Open results from 4MT models
 df4MTLinear= pd.read_csv(path_modelsR + "\\03AlloSpatialTask\\LinearRegressionAngDisp_4MT.csv")
@@ -100,8 +101,50 @@ Correlations_across_parameters(df4MTLinear, slopesSpatialAcc, 'slopesRT_4MT','me
 Correlations_across_parameters(df4MTLinear, slopesSpatialAcc, 'slope_4MT','meanDistance_z')
 
 Correlations_across_parameters( df4mtmean,slopesSpatialRT,'key_resp_3.corr', 'slope_random_meanDistance') 
+Correlations_across_parameters( df4MTLinear,slopesSpatialRTdistCorr,'slopesRT_4MT', 'slope_selfCorrect') 
+
 Correlations_across_parameters(df4MTLinear,slopesSpatialRT, 'slopesRT_4MT','slope_random_meanDistance')    
-Correlations_across_parameters(df4MTLinear,slopesSpatialRT, 'slope_4MT','slope_random_meanDistance')  
+Correlations_across_parameters(df4MTLinear,slopesSpatialRT, 'df4MTLinear','slope_random_meanDistance')  
 
 Correlations_across_parameters(dfegoSpatial_mean,df4mtmean, 'Accuracy','key_resp_3.corr')  
 Correlations_across_parameters(dfegoSpatial_mean,df4mtmean, 'Response.rt','key_resp_3.rt')  
+
+fig, axes = plt.subplots(1, 2, figsize=(7,3))
+ymin, ymax = 0.2, 1
+yticks = np.arange(0.2, 1.01, 0.2)
+custom_params = {"axes.spines.right": False, "axes.spines.top": False}
+sns.set_theme(style="ticks", rc=custom_params)
+
+#color
+cmap = sns.color_palette("dark:#5A9_r", as_cmap=True)
+greenish_color = 'grey'  # ~0.6–0.7 da un tono verde-azulado bonito
+
+all_dfs= pd.merge(df4mtmean, dfegoSpatial_mean, on='PROLIFIC_PID')
+
+for ax, (var, label) in zip(
+    axes,
+    [
+        ('key_resp_3.corr', '4MT Performance'),
+        ('Accuracy', 'EgoSpatial Performance')
+    ]
+):
+    sns.barplot(y=var, data=all_dfs, color='lightgrey', ax=ax)
+    sns.stripplot(y=var, data=all_dfs, color=greenish_color, alpha=0.6, size=7, marker='o', ax=ax)
+    ax.set_ylabel(label, color='black', size=14, fontweight='bold', labelpad=3)
+    ax.set_ylim(ymin, ymax)
+    ax.set_yticks(yticks)
+    
+    # 🔹 Estilo de los números del eje Y
+    ax.tick_params(axis='y', labelsize=12, width=1.2, color='black', direction='out', length=3)
+    for label_tick in ax.get_yticklabels():
+        label_tick.set_fontweight('bold')
+        label_tick.set_fontname('Arial')  # puedes cambiarlo por 'Calibri', 'Times New Roman', etc.
+    
+    # 🔹 Formato bonito (quita ceros extra, usa un decimal)
+    ax.set_yticklabels([f'{y:.1f}' for y in yticks])
+    
+    # 🔹 Quitar la raya del eje x
+    ax.tick_params(bottom=False)
+
+fig.subplots_adjust(wspace=0.6, hspace=0.4)
+plt.show()

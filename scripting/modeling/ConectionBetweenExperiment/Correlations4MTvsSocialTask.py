@@ -44,7 +44,7 @@ social_slopes= pd.read_csv(path_modelsR + "\\anchoring_biasSpatialSocialslopes.c
 
 # Mean Dfs
 df4mtmean_disparity= df4MT.groupby(['PROLIFIC_PID','angularDisparity'])['key_resp_3.corr'].mean().reset_index()
-df4mtmean= df4MT.groupby('PROLIFIC_PID')['key_resp_3.corr'].mean().reset_index()
+df4mtmean= df4MT.groupby('PROLIFIC_PID').mean().reset_index()
 dfegoSpatial_mean= dfegoSpatial.groupby('PROLIFIC_PID')['Accuracy'].mean().reset_index()
 
 
@@ -56,8 +56,18 @@ def Correlations_across_parameters(df1,df2, y_variable, x_variable):
     union= pd.merge(df1,df2, on='PROLIFIC_PID')
     plt.figure(figsize=(5,4))
     sns.regplot(data=union, y=y_variable, x=x_variable,ci=99, marker="o", color=".3", line_kws=dict(color="r"))
-    plt.xlabel('4MT Slopes', color='black',size=16, fontweight='bold')
-    plt.ylabel('Social slopes', color='black',size=16, fontweight='bold')
+    
+    if x_variable=='slopesRT_4MT' or x_variable=='slope_4MT':
+        plt.xlabel('Spatial slopes', color='black',size=16, fontweight='bold')
+    elif x_variable=='key_resp_3.corr':
+        plt.xlabel('4MT Performance', color='black',size=16, fontweight='bold')
+    elif x_variable=='key_resp_3.rt':
+        plt.xlabel('4MT RT', color='black',size=16, fontweight='bold')
+    
+    if y_variable=='slope_spatial':
+        plt.ylabel('Spatial slopes', color='black',size=16, fontweight='bold')
+    elif y_variable=='slope_social':
+            plt.ylabel('Social slopes', color='black',size=16, fontweight='bold')
     plt.show()
     
     print("------------------------------------------------------------------")
@@ -79,3 +89,12 @@ Correlations_across_parameters(social_slopes,df_slopes, 'slope_social','coeficie
 Correlations_across_parameters(social_slopes,df_slopes, 'slope_social','coeficients_quadraticAcc')
 Correlations_across_parameters(social_slopes,df4MTLinear, 'slope_social','slopesRT_4MT')
 Correlations_across_parameters(social_slopes,df4MTLinear, 'slope_social','slope_4MT')
+
+Correlations_across_parameters(social_slopes,df4MTLinear, 'slope_spatial','slopesRT_4MT')
+Correlations_across_parameters(social_slopes,df4MTLinear, 'slope_spatial','slope_4MT')
+
+Correlations_across_parameters(social_slopes,df4mtmean, 'slope_spatial','key_resp_3.corr')
+Correlations_across_parameters(social_slopes,df4mtmean, 'slope_spatial','key_resp_3.rt')
+
+
+sns.regplot(y='key_resp_3.corr',x='key_resp_3.rt', data=df4mtmean)

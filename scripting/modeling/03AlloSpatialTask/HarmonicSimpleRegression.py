@@ -10,7 +10,10 @@ Created on Fri Jul 18 15:38:32 2025
 ## T a harmonic regression model 
 import numpy as np, pandas as pd
 import statsmodels.api as sm
-df4MT = pd.read_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\Analysis\Experiment\Datasets\allotask.csv")
+path_data= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\data"
+paths_results= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\results"
+
+df4MT= pd.read_csv(path_data + "\\processed\\AlloTask_SpatialScore.csv")
 df4mtMeans= df4MT.groupby(['PROLIFIC_PID','angularDisparity'])['key_resp_3.corr'].mean().reset_index()
 # 1) Mapea 1..8 a grados "normales"
 deg_map = {1:40,2:80,3:120,4:160,5:200,6:240,7:280,8:320}
@@ -44,10 +47,12 @@ for pid, grp in df4mtMeans.groupby('PROLIFIC_PID'):
     })
 
 df_harm = pd.DataFrame(results)
-print(df_harm)
+
+
+df_harm.to_csv(paths_results + "\\03AlloSpatialTask\\HarmonicRegression.csv")
 ##############################################################################################################################################
 
-
+'''
 import numpy as np, pandas as pd
 import statsmodels.api as sm
 
@@ -84,3 +89,4 @@ for pid, grp in anova.groupby('PROLIFIC_PID'):
 
 df_harm = pd.DataFrame(results)
 print(df_harm)
+'''

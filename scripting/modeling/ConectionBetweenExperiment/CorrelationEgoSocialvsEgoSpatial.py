@@ -24,6 +24,9 @@ path_modelsR= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project
 slopesSpatialRT= pd.read_csv(path_modelsR + "\\CoefsMixedLinearRT_meanDistance_egoTask.csv")
 slopesSpatialAcc= pd.read_csv(path_modelsR + "\\CoefsMixedLogisticAcc_meanDistance_egoTask.csv")
 
+slopesSpatialRTdistCorr= pd.read_csv(path_modelsR + "\\CoefsMixedLinearRT_selfCorrectDistance_egoTask.csv")
+
+
 ########################## CORRELATION SLOPES WITH ACC ################################################
 
 def compute_slopes(df, x_col, y_col, pid_col='PROLIFIC_PID', suffix=''):
@@ -38,7 +41,7 @@ def compute_slopes(df, x_col, y_col, pid_col='PROLIFIC_PID', suffix=''):
 
 # Compute slopes
 slopes_social = compute_slopes(egoSocial, 'RTlog_cwc', 'RD', suffix='social')
-slopes_spatial = compute_slopes(egoSpatial, 'RTlog_cwc', 'meanDistance', suffix='spatial')
+slopes_spatial  = compute_slopes(egoSpatial, 'RTlog_cwc', 'meanDistance', suffix='spatial')
 
 
 slopes= pd.merge(slopes_social,slopes_spatial, on='PROLIFIC_PID')
@@ -147,7 +150,6 @@ plt.ylabel('Performance EgoSpatial Task')
 plt.show()
 
 ##################################################################################################################
-
 #D. meanDistance_z Accuracy con su propia performance EgoTask
 #################################################################################################################
 dfAlloSpatialSocial= pd.merge(slopesSpatialAcc, dfmeans, on='PROLIFIC_PID')
@@ -169,3 +171,25 @@ plt.show()
 
 ##################################################################################################################
 
+##################################################################################################################
+
+#E distCorr_z RT con su propia performance EgoTask
+#################################################################################################################
+dfAlloSpatialSocial= pd.merge(slopesSpatialRTdistCorr, slopes, on='PROLIFIC_PID')
+#Grafico
+x=dfAlloSpatialSocial['slope_selfCorrect']
+y=dfAlloSpatialSocial['slope_social']
+
+plt.figure ( 1, figsize=(5,5))
+sns.regplot(x=x, y=y,data=dfAlloSpatialSocial, color='black')
+
+correlation, p_value = spearmanr(x, y)
+
+plt.text(0.05, 0.95, f'SpearmanR: {correlation:.2f}', fontsize=10, transform=plt.gca().transAxes,va='top', ha='left')
+plt.text(0.05, 0.9, f'p-value: {p_value:.3f}', fontsize=10, transform=plt.gca().transAxes,va='top', ha='left')
+
+plt.xlabel('slopesSpatialRTdistCorr')
+plt.ylabel('slopes_spatial')
+plt.show()
+
+##################################################################################################################

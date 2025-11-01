@@ -101,8 +101,8 @@ dfAnchoring['RD']= abs(dfAnchoring['Vself']- dfAnchoring['Vother'])
 ##################################################################################################################
 ## EGO SPATIAL DATASET
 dfegoSpatial=df[['PROLIFIC_PID','gender','exp_index','Response.keys','Response.rt','distCorrSelf','distIncorrSelf','Response.corr',
-                 'correctKeyboard', 'Self_proximity','SelfvsLandmark_proximity','AD','Difficulty','Angle','Type_trialEncoded',
-                 'encodedTrial.started','routine_2AFC_Ego.stopped','n_objeto']]
+                 'correctKeyboard', 'Self_proximity','SelfvsLandmark_proximity','AD','Difficulty','Angle','Type_trialEncoded','distCorrLand',
+                 'encodedTrial.started','routine_2AFC_Ego.stopped','n_objeto','distOrigLand', 'distOrigSelf']]
 
 # Corrections RTs  
 mask = ((dfegoSpatial['Response.corr'] == 0) &(dfegoSpatial['Response.keys'].isna()) &(dfegoSpatial['Response.rt'].isna()))

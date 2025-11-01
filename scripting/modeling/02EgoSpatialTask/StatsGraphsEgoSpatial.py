@@ -11,11 +11,12 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 from scipy import stats
 
-#dfegoSpatial= pd.read_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\Analysis\Experiment\Datasets\egospatialtask.csv")
-dfegoSpatial= pd.read_excel(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP5_SocialSpatialTask\Analysis\Datasets\EgoSpatialTask_WP5.xlsx")
+paths_cleanedData= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\data\cleanedData"
+paths_results= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\data\cleanedData"
+dfegoSpatial= pd.read_csv(r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\Analysis\Experiment\Datasets\egospatialtask.csv")
 
-participant_ID= 'DNI' # participants with social transformation phase
-#participant_ID= 'PROLIFIC_PID' # online participants
+#participant_ID= 'DNI' # participants with social transformation phase
+participant_ID= 'PROLIFIC_PID' # online participants
 
 
 dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID])[['Accuracy','Response.rt']].mean().reset_index()
@@ -56,13 +57,21 @@ dfegoSpatial= dfegoSpatial.loc[(dfegoSpatial.RTlog_pre> out_sd_lo) & (dfegoSpati
 dfegoSpatial['RTlog_pre_mean'] = dfegoSpatial.groupby(participant_ID)['RTlog_pre'].transform('mean')
 dfegoSpatial['RTlog_pre_cwc']= dfegoSpatial['RTlog_pre'] - dfegoSpatial['RTlog_pre_mean']
 
+
+##########################################################################################################################################################
+## Factors ANOVA:
+    # Self proximity
+    # Type enconded trial
+    # Self landmark proximity
+    
 ##########################################################################################################################################################
                                                                     #### SELF PROXIMITY ####
 ##########################################################################################################################################################
 # Bins
 fig= plt.figure(2, figsize=(8,7))
+df_= dfegoSpatial.loc[dfegoSpatial['SelfvsLandmark_proximity']=='correct_self']
 plt.subplot(2,2,1)
-dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'Self_proximity',])[['Accuracy','Response.rt','distCorrSelf','AD']].mean().reset_index()
+dfegoSpatial_mean= df_.groupby([participant_ID,'Self_proximity',])[['Accuracy','Response.rt','distCorrSelf','AD']].mean().reset_index()
 sns.barplot(x='Self_proximity', y=dfegoSpatial_mean['Accuracy']*100, data=dfegoSpatial_mean,color='lightgrey')     
 sns.stripplot(x='Self_proximity', y=dfegoSpatial_mean['Accuracy']*100, data=dfegoSpatial_mean,color='black', dodge=True,alpha=0.8, size=3)
 plt.ylabel('Accuracy (%Correct)', color='black',size=16, fontweight='bold')
@@ -76,8 +85,9 @@ plt.xlabel('Self proximity ', color='black',size=16, fontweight='bold')
 fig.subplots_adjust(wspace=0.45)
 
 plt.show()
-
-################### Continuos graphs ################### Self proximity define as distance to the correct ball 
+'''
+# Self proximity define as distance to the correct ball 
+################### Continuos graphs ################### 
 fig= plt.figure(20000, figsize=(10,10))
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style="ticks", rc=custom_params)
@@ -114,7 +124,7 @@ sns.regplot(x='distCorrSelf', y='Response.rt', data=dfegoSpatial.loc[dfegoSpatia
 plt.ylabel('RT', color='black',size=20, fontweight='bold')
 plt.xlabel('Self - CorrectObject distance ', color='black',size=20, fontweight='bold')
 plt.show()
-
+'''
 
 
 ############## ACCURACY ####################### 
@@ -319,25 +329,12 @@ ax_joint.set_xlabel('MeanDistance Choices', fontsize=16, fontweight='bold')
 ax_joint.set_ylabel('RT (s)',                    fontsize=16, fontweight='bold')
 
 plt.show()
-
+'''
 ############################################################################################################
 import numpy as np
 from matplotlib.gridspec import GridSpec
 fig = plt.figure(figsize=(5, 5))
 gs = GridSpec(2, 2, figure=fig)
-
-###Step 1: transformation RT to log
-dfegoSpatial['RTlog']= np.log(dfegoSpatial['Response.rt'])
-
-### ELiminate outlier
-out_sd_lo= dfegoSpatial['RTlog'].mean() - (2.5*  (dfegoSpatial['RTlog'].std()))
-out_sd_hi= dfegoSpatial['RTlog'].mean()  + (2.5*  (dfegoSpatial['RTlog'].std()))
-dfegoSpatial= dfegoSpatial.loc[(dfegoSpatial.RTlog> out_sd_lo) & (dfegoSpatial.RTlog< out_sd_hi)]
-dfegoSpatial['RTlog_mean'] = dfegoSpatial.groupby(participant_ID)['RTlog'].transform('mean')
-dfegoSpatial['std'] = dfegoSpatial.groupby(participant_ID)['RTlog'].transform('std')
-dfegoSpatial['RTlog_cwc']= (dfegoSpatial['RTlog'] - dfegoSpatial['RTlog_mean'])
-dfegoSpatial['RTlog_std']= (dfegoSpatial['RTlog'] - dfegoSpatial['RTlog_mean'])/(dfegoSpatial['std'] )
-
 
 ax1 = fig.add_subplot(gs[0, 0])
 sns.set_theme(style="white", palette=None)
@@ -355,9 +352,10 @@ plt.show()
 
 rt = dfegoSpatial.groupby([participant_ID])['Response.rt'].agg(['mean','sem','std']).reset_index()
 print('Participants mean anchor rt:' + str(rt['mean'].mean()) +  ' with a SEM of: '+ str(rt['sem'].mean()))
-
+'''
 #############################################################################################################
 ############################################################################################################
+'''
 import numpy as np
 from matplotlib.gridspec import GridSpec
 
@@ -393,10 +391,10 @@ plt.show()
 
 rt = dfegoSpatial.groupby([participant_ID])['Response.rt'].agg(['mean','sem','std']).reset_index()
 print('Participants mean anchor rt:' + str(rt['mean'].mean()) +  ' with a SEM of: '+ str(rt['sem'].mean()))
-
+'''
 ###############################################################################################################
 #### SELF VS LANDMARK PROXIMITY ####
-dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'SelfvsLandmark_proximity',])[['Accuracy','Response.rt']].mean().reset_index()
+dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'SelfvsLandmark_proximity',])[['Accuracy','Response.rt','AD']].mean().reset_index()
 
 fig=plt.figure(3, figsize=(8,8))
 plt.subplot(2,2,1)
@@ -421,10 +419,11 @@ plt.xticks(
     labels=["Landmark", "Self"],       # but show these texts instead
     rotation=0
 )
+
 plt.show()
 
 from scipy import stats
-variables=['Response.rt','Accuracy']
+variables=['Response.rt','Accuracy','AD']
 for i in variables:
     acc_self     = dfegoSpatial_mean[i].loc[dfegoSpatial_mean['SelfvsLandmark_proximity'] == 'correct_landmark']
     acc_landmark = dfegoSpatial_mean[i].loc[dfegoSpatial_mean['SelfvsLandmark_proximity'] == 'correct_self']
@@ -464,7 +463,7 @@ for i in variables:
     
     print(f"str(i)i: t = {t_stat_scipy:.3f}, p = {p_value_scipy:.3f}")
 
-## Tryal tupe encond
+## Tryal type enconded
 
 fig= plt.figure(5, figsize=(8,8))
 dfegoSpatial_mean= dfegoSpatial.groupby([participant_ID,'Type_trialEncoded','Difficulty'])[['Accuracy','Response.rt','AD']].mean().reset_index()

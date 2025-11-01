@@ -29,6 +29,14 @@ anova['group'] = anova['angularDisparity'].replace({
     4: '160º',
     5: '160º'})
 
+pair_map = {
+    1: 1, 8:1,
+    2: 2, 7: 2,
+    3: 3, 6: 3,
+    4: 4, 5:4 }
+
+# create the new bin column
+df4MT['bin'] = df4MT['angularDisparity'].map(pair_map)
 
 anova['Accuracy'] = anova['key_resp_3.corr'] * 100
 
@@ -119,7 +127,7 @@ plt.show()
 # Linear regression 
 results = []
 predictors= ['bin']
-
+df4MT["bin_z"] = df4MT.groupby("PROLIFIC_PID")["bin"].transform(lambda x: (x - x.mean()) / x.std())
 for participant in df4MT['PROLIFIC_PID'].unique():
     data_subset = df4MT[df4MT['PROLIFIC_PID'] == participant]
     data_subset = data_subset.dropna(subset=['key_resp_3.corr', 'key_resp_3.rt', 'bin']) # Eliminate Nans
@@ -127,6 +135,7 @@ for participant in df4MT['PROLIFIC_PID'].unique():
     data_subset['logRT'] = np.log(data_subset['key_resp_3.rt'])
 
     X = data_subset[predictors]
+    X_acc= data_subset[['bin_z']]
     y = data_subset['logRT']
     yAcc= data_subset['key_resp_3.corr']
     
@@ -134,11 +143,10 @@ for participant in df4MT['PROLIFIC_PID'].unique():
     modelRT= LinearRegression().fit(X,y)
     coefs_RT= modelRT.coef_
     
-    modelAcc= LinearRegression().fit(X,yAcc)
+    modelAcc= LinearRegression().fit(X_acc,yAcc)
     coefs_Acc= modelAcc.coef_
     
-    results.append({'PROLIFIC_PID': participant, 'slopesRT_4MT':coefs_RT[0],
-                    'slope_4MT': coefs_Acc[0]})
+    results.append({'PROLIFIC_PID': participant, 'slopesRT_4MT':coefs_RT[0],'intercept_Acc': modelAcc.intercept_, 'slope_4MT': coefs_Acc[0]})
 
     
     
