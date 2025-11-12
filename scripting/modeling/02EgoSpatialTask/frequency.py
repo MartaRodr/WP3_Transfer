@@ -76,13 +76,28 @@ df['bins_SelfObjectCorrectDistance'] = pd.cut(
     include_lowest=True
 )
 
-df_total = df.groupby(['PROLIFIC_PID', 'Self_proximity', 'bins_SelfObjectCorrectDistance']).size().reset_index(name='N_total')
+# 1. Crear los cuartiles
+df['bin_AD'] = pd.cut(
+    df['distCorrSelf'],
+    bins=[
+        df['AD'].min(),
+        df['AD'].quantile(0.25),
+        df['AD'].quantile(0.5),
+        df['AD'].quantile(0.75),
+        df['AD'].max()
+    ],
+    labels=['Q1', 'Q2', 'Q3', 'Q4'],
+    include_lowest=True
+)
+
+
+df_total = df.groupby(['PROLIFIC_PID', 'Self_proximity', 'bin_AD']).size().reset_index(name='N_total')
 
 # 3. Contar número de aciertos por grupo (accuracy = 1)
-df_correct = df[df['Accuracy'] == 1].groupby(['PROLIFIC_PID', 'Self_proximity', 'bins_SelfObjectCorrectDistance']).size().reset_index(name='N_correct')
+df_correct = df[df['Accuracy'] == 1].groupby(['PROLIFIC_PID', 'Self_proximity', 'bin_AD']).size().reset_index(name='N_correct')
 
 # 4. Unir ambos para calcular proporción
-df_merged = pd.merge(df_total, df_correct, on=['PROLIFIC_PID', 'Self_proximity', 'bins_SelfObjectCorrectDistance'], how='left')
+df_merged = pd.merge(df_total, df_correct, on=['PROLIFIC_PID', 'Self_proximity', 'bin_AD'], how='left')
 df_merged['N_correct'] = df_merged['N_correct'].fillna(0)  # En caso de que haya 0 aciertos
 
 df_merged['C'] = df_merged['N_correct'] /df_merged['N_total'] 
@@ -93,7 +108,7 @@ df_merged['Differences']= df_merged['C'] - df_merged['A']
 
 plt.figure(figsize=(6,6))
 
-sns.lineplot(x='bins_SelfObjectCorrectDistance', y='Differences', hue='Self_proximity', data=df_merged, palette=custom_palette)
+sns.lineplot(x='bin_AD', y='Differences', data=df_merged, palette=custom_palette)
 plt.axhline(0.00, linestyle='--', color='red', linewidth=1)
 plt.axhline(-0.50, linestyle='--', color='black', linewidth=1)
 #plt.axhline(0.50, linestyle='--', color='black', linewidth=1)

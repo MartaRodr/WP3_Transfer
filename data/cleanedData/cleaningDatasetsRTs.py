@@ -18,7 +18,7 @@ output_path= r"C:\Users\aramendi\Desktop\EscritorioMARTA\WP_Transfer\WP3Project\
 
 ################################################################################################
 dfAnchoring = pd.read_csv(output_path+"\\processed\\egosocialtask.csv")
-dfegoSpatial= pd.read_csv(output_path+"\\processed\\egospatialtask.csv")
+dfegoSpatial= pd.read_csv(output_path+"\\processed\\egospatialTask_SpatialScore.csv")
 ################################################################################################
 ############################## CLEANING DATABASE ######################################################
 ### Cleaning database SOCIAL

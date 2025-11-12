@@ -36,6 +36,7 @@ slopesSpatialAcc= pd.read_csv(path_modelsR + "\\02EgoSpatialTask\\CoefsMixedLogi
 # Open results from 4MT models
 df4MTLinear= pd.read_csv(path_modelsR + "\\03AlloSpatialTask\\LinearRegressionAngDisp_4MT.csv")
 df_slopes= pd.read_csv(path_modelsR + "\\03AlloSpatialTask\\allocentric_slopesQuatraticRegressions.csv")
+df_harm= pd.read_csv(paths_results + "\\03AlloSpatialTask\\HarmonicRegression.csv")
 
 
 # Open social slopes
@@ -96,5 +97,5 @@ Correlations_across_parameters(social_slopes,df4MTLinear, 'slope_spatial','slope
 Correlations_across_parameters(social_slopes,df4mtmean, 'slope_spatial','key_resp_3.corr')
 Correlations_across_parameters(social_slopes,df4mtmean, 'slope_spatial','key_resp_3.rt')
 
-
+Correlations_across_parameters(social_slopes,df_harm, 'slope_social','amplitude')
 sns.regplot(y='key_resp_3.corr',x='key_resp_3.rt', data=df4mtmean)

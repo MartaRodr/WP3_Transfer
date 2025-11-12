@@ -70,7 +70,12 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
 
       - Scripts3: `CheckEgoSpatialTask.py`
           - Script to check egospatial features AD between conditions. 
-
+      - Script3: 'proximityEgoSpatialTask.py'
+          - Script to check proximity effects in egospatial task. IN this script i study how the probability to select the option closer to the self is influenced by the difficulty of the trials ( absolute distance between 
+          the two options and the target). 
+          - IN the same script i correalte this new variable with the social and 4MT slopes, to see if there is any relationship between this proximity effect and the other tasks.
+          
+      ### Results Visualization:
     # Experiment 3: Allocentric Spatial Task
     - `scripting/modelling/allotask/binsangularDisparityCorr.py`: This script perform the individual level regression models for the allocentric spatial tºask.
     - `scripting/modelling/allotask/mixedModel4MT_linearEffect.R`: For the mixed models, the script will be runned in R.
@@ -154,6 +159,16 @@ participants that did not performed well the task: (4MT Acc<0.3, and SpatialEgoT
 
         - AccmeanDistance_z with quadraticTerm Accuracy 4MT
         - AccmeanDistance_z with quadraticTerm RTs 4MT
+
+    ### SANITY CHECKS : Correlations between performances and RTs.
+      Correlation between performances and RTS in both spatial tasks.
+      
+      <img src="plots/AllovsEgoSpatial_Performance.png" alt="4MT Accuracy Slopes" width="400" style="display: inline-block; margin-right: 10px;">
+      <img src="plots/AllovsEgoSpatial_RTs.png" alt="4MT RT Slopes" width="400" style="display: inline-block;">
+      
+      *Figure: Relationship between EgoSpatial task and 4MT. Left: Accuracy , Right: RTs.*
+
+    
 
     ## 3. Correlations between 4MT and social task:
     `scripts/modelling/ConnectionBetweenExperiment/Correlation4MT_Social.py`

@@ -68,12 +68,12 @@ library(lme4)
 dat$meanDistance_z         <- scale(dat$meanDistance,      center = TRUE, scale = TRUE)
 dat$AD_z         <- scale(dat$AD,      center = TRUE, scale = TRUE)
 dat$Score_SpatialGeneral_z <- scale(dat$Score_SpatialGeneral, center = TRUE, scale = TRUE)
-
+dat$SelfCorrect_z <- scale(dat$distCorrSelf, center = TRUE, scale = TRUE)
 
 
 # *- Analysis: Spatial model -------------------------------------------------
-# Fit model RTmodel
-mod_spatial <- mixed( RTlog ~  meanDistance_z * Self_proximity * AD_z * Score_SpatialGeneral_z +
+# Fit model RTmodel with meanDistancez
+mod_spatial <- mixed( RTlog ~  meanDistance_z  * AD_z * Score_SpatialGeneral_z +
                         (meanDistance_z  | PROLIFIC_PID),  data = dat, method = "S")
 summary(mod_spatial)
 
@@ -97,6 +97,7 @@ write.csv(df_slopes_LMM,
           file = "C:/Users/aramendi/Desktop/EscritorioMARTA/WP_Transfer/WP3Project/results/02EgoSpatialTask/CoefsMixedLinearRT_meanDistance_egoTask.csv",
           row.names = FALSE)
 
+#### accuracy model ###
 # Fit model Accuracy
 mod_spatial_logit2 <- glmer(
   Accuracy ~  meanDistance_z * AD_z * Score_SpatialGeneral_z +
@@ -109,7 +110,7 @@ mod_spatial_logit2 <- glmer(
   )
 )
 
-v
+
 
 
 mod_spatial_logit2 <- glmer(
@@ -146,7 +147,25 @@ write.csv(
   row.names = TRUE   
 )
 
+### frecuency
+# Fit model RTmodel with self correct option
+modelSelfCorrect <- mixed( RTlog ~  SelfCorrect_z  * AD_z * Score_SpatialGeneral_z +
+                        (SelfCorrect_z  | PROLIFIC_PID),  data = dat, method = "S")
+summary(modelSelfCorrect)
 
 
+# Extract coeffs
+lmer_model <- modelSelfCorrect$full_model
+ranefs <- ranef(lmer_model)$PROLIFIC_PID
 
+library(tibble)
 
+df_slopes_LMM <- ranefs %>%
+  rownames_to_column("PROLIFIC_PID") %>%
+  rename(intercept_random = `(Intercept)`,
+         slope_selfCorrect = SelfCorrect_z)
+
+# Save results in result path
+write.csv(df_slopes_LMM,
+          file = "C:/Users/aramendi/Desktop/EscritorioMARTA/WP_Transfer/WP3Project/results/02EgoSpatialTask/CoefsMixedLinearRT_selfCorrectDistance_egoTask.csv",
+          row.names = FALSE)

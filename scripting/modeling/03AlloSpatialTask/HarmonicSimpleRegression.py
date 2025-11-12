@@ -23,7 +23,7 @@ df4mtMeans['deg_mapped'] = df4mtMeans['angularDisparity'].map(deg_map).astype(fl
 
 # 3) Ahora sí, a radianes sin problema
 df4mtMeans['θ'] = np.deg2rad(df4mtMeans['deg_mapped'])
-df4mtMeans['Accuracy'] = df4mtMeans['key_resp_3.corr'] * 100
+df4mtMeans['Accuracy'] = df4mtMeans['key_resp_3.corr'] 
 results = []
 for pid, grp in df4mtMeans.groupby('PROLIFIC_PID'):
     X = pd.DataFrame({
@@ -49,24 +49,18 @@ for pid, grp in df4mtMeans.groupby('PROLIFIC_PID'):
 df_harm = pd.DataFrame(results)
 
 
-df_harm.to_csv(paths_results + "\\03AlloSpatialTask\\HarmonicRegression.csv")
-##############################################################################################################################################
 
-'''
-import numpy as np, pandas as pd
+import numpy as np
+import pandas as pd
 import statsmodels.api as sm
 
-# 1) Mapea 1..8 a grados "normales"
-deg_map = {1:40,2:80,3:120,4:160,5:200,6:240,7:280,8:320}
+# ---------------------------------------------------------------------
+# Permutation test to see if amplitude is significant above chance
+# ---------------------------------------------------------------------
 
-anova = anova.copy()
-anova['deg_mapped'] = anova['angularDisparity'].map(deg_map).astype(float)
 
-# 3) Ahora sí, a radianes sin problema
-anova['θ'] = np.deg2rad(anova['deg_mapped'])
-anova['Accuracy'] = anova['key_resp_3.corr'] * 100
-results = []
-for pid, grp in anova.groupby('PROLIFIC_PID'):
+def compute_amp(grp):
+    """Compute amplitude for one participant."""
     X = pd.DataFrame({
         'cosθ': np.cos(grp['θ']),
         'sinθ': np.sin(grp['θ'])
@@ -74,19 +68,46 @@ for pid, grp in anova.groupby('PROLIFIC_PID'):
     X = sm.add_constant(X)
     y = grp['Accuracy']
     fit = sm.OLS(y, X).fit()
-    β0, βc, βs = fit.params
-    amp   = np.hypot(βc, βs)
-    phase = np.arctan2(βs, βc)
-    results.append({
-        'participant': pid,
-        'intercept':   β0,
-        'beta_cos':    βc,
-        'beta_sin':    βs,
-        'amplitude':   amp,
-        'phase_rad':   phase,
-        'R2':          fit.rsquared
-    })
+    βc = fit.params['cosθ']
+    βs = fit.params['sinθ']
+    amplitude = np.sqrt(βc**2 + βs**2)
+    return amplitude
 
-df_harm = pd.DataFrame(results)
-print(df_harm)
-'''
+# ---------------------------------------------------------
+# 1) Compute REAL group mean amplitude
+# ---------------------------------------------------------
+amps_real = []
+for pid, grp in df4mtMeans.groupby('PROLIFIC_PID'):
+    amps_real.append(compute_amp(grp))
+real_group_mean = np.mean(amps_real)
+
+# ---------------------------------------------------------
+# 2) Permutation test
+# ---------------------------------------------------------
+n_permutations = 200   # increase to 1000 for real analysis
+null_distribution = []
+
+for perm in range(n_permutations):
+    perm_amps = []
+    for pid, grp in df4mtMeans.groupby('PROLIFIC_PID'):
+        shuffled = grp.copy()
+        shuffled['θ'] = np.random.permutation(shuffled['θ'])  # shuffle angles
+        amp = compute_amp(shuffled)
+        perm_amps.append(amp)
+    null_distribution.append(np.mean(perm_amps))
+
+null_distribution = np.array(null_distribution)
+
+# ---------------------------------------------------------
+# 3) Compute p-value
+# ---------------------------------------------------------
+p_value = (np.sum(null_distribution >= real_group_mean) + 1) / (n_permutations + 1)
+
+real_group_mean, p_value
+
+
+
+
+#df_harm.to_csv(paths_results + "\\03AlloSpatialTask\\HarmonicRegressionRT.csv")
+##############################################################################################################################################
+
